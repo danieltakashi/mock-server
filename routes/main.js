@@ -1,16 +1,14 @@
 const fs = require('fs')
 
-const splitPath   = (path)      => path.split('/').filter(item => item);
-const findModels  = (splitPath) => splitPath.filter((_, index) => index % 2 == 0);
-const findIds     = (splitPath) => splitPath.filter((_, index) => index % 2 == 1);
-const mapModelId  = (model, id) => ({model: model, id: id});
-const findItem    = (model, id) => (model&&id) ? payload(model).find(item => item.id == id) : void (0);
-const findAll     = (model)     => (model) ? payload(model) : void (0);
-const search  = (model, id) => (id) ? findItem(model, id) : findAll(model).map((entry) => match(entry));
-const byQuery = (sq)        => sq.map(item => search(item.model, item.id));
+const wrapItem      = (model, id) => ({model: model, id: id});
+const findItem      = (model, id) => (model && id) ? payload(model).find(item => item.id == id) : void(0);
+const findAll       = (model)     => (model) ? payload(model) : void(0);
+const search        = (model, id) => (model && id) ? findItem(model, id) : findAll(model)//.map((entry) => match(entry));
+const modelProperty = (item) => Object.keys(item).filter(prop => MODELS.some(model => model == prop))
 
-const payload = (model) => {
-  var payloadDir = './payloads/'
+
+const payload = (model, path) => {
+  var payloadDir = !path ? './payloads/' : path
   var filename = payloadDir + model+'.json'
   var rawdata = fs.readFileSync(filename)
   return JSON.parse(rawdata)
@@ -33,13 +31,12 @@ const folderModels = (path) => {
 
 const queryPath = (path) => {
   var f = path.toLowerCase().split('/').filter(i => i)
-  console.log(">>> ", f, path)
   var query = []
 
   while(f.length > 0) {
     var model = f.shift()
     var id = f.shift()
-    var item = mapModelId(model, id)
+    var item = wrapItem(model, id)
     query.push(item)
   }
 
@@ -57,24 +54,50 @@ const match = (record) => {
   return entry
 }
 
-const reducer = (acc, cur) => {
-  let model = Object.keys(cur).filter(property => MODELS.some(model => model == property))
-  model = model[0]
-  cur[model] = cur[model].map(id => {
-    if('function'===typeof(acc.filter)) return acc.filter(item => item.id == id)[0]
-    if(acc.id == id) return acc
-    return void(0)
-  })
-  return cur 
-}
-const payloadGenerator = (path) => byQuery(queryPath(path)).reverse().reduce(reducer)
-
-
-
 const MODELS = folderModels('./payloads');
 
-// var uri = '/products/2/brands';
-// console.log(payloadGen(uri))
-// console.log(queryPath(uri))
 
-module.exports = payloadGenerator;
+const objects = (item) => {
+  const normalizeItem = (item) => {
+    var foreignKeys = {}
+    var models = modelProperty(item)
+    models.forEach(fk => {
+      foreignKeys[fk] = item[fk].map(id => wrapItem(fk, id))
+    })
+    for( key in foreignKeys) {
+      if (foreignKeys[key])
+        foreignKeys[key] = foreignKeys[key].map(item => objects(item))
+    }
+
+    for( key in foreignKeys) {
+      if (foreignKeys[key])
+      item[key] = foreignKeys[key]
+    }
+    return item;
+  }
+  
+  var result = search(item.model, item.id)
+
+  return (result.length > 0) ? result.map(item => normalizeItem(item)) : normalizeItem(result);
+}
+
+
+const index = (path) => {
+  try{
+    var queryEntry = queryPath(path)
+    var result = objects(queryEntry.shift())
+
+    var curr = result;
+    queryEntry.forEach(item => {
+      var currenIteration = curr[item.model].filter(it => it.id == item.id)
+      //if (currenIteration.length == 0) throw Error("Dont Match")
+      curr[item.model] = currenIteration;
+    })
+
+    return result
+  } catch (err) {
+    return []
+  }
+}
+
+module.exports = index;
