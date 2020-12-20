@@ -4,7 +4,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cors = require('cors')
 
-var users = require('./routes/users');
+var routes = require('./routes/index');
 
 var app = express();
 
@@ -13,6 +13,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser())
 
-app.use('/', users);
+app.use('/', routes);
 
 module.exports = app;

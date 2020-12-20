@@ -2,11 +2,16 @@
   {
     "id": 1,
     "name": "name 1",
-    "products": [ 1, 2 ],
-    "brands": [ 1, 2 ]
+    "products": [ ]
   },
   {
     "id": 2,
-    "name": "name 2"
+    "name": "name 2",
+    "products": [ 2 ]
+  },
+  {
+    "id": 3,
+    "name": "name 2",
+    "products": [ 1, 2 ]
   }
 ]
