@@ -3,7 +3,7 @@
     "id": 1,
     "name": "name 1",
     "products": [ 1, 2 ],
-    "brands": [ 1 ]
+    "brands": [ 1, 2 ]
   },
   {
     "id": 2,
