@@ -6,6 +6,6 @@
   {
     "id": 2,
     "name": "product 2",
-    "brands": [ 1, 2 ]
+    "brands": [ 1 ]
   }
 ]

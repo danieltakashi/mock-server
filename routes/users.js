@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const payload = require('./main')
+
 
 router.use('*', function(req, res, next) {
-  const data = { data: { name: "test"} };
+  var data = payload(req.originalUrl);
   res.json(data);
 });
 
