@@ -5,7 +5,7 @@
   "author": "Daniel Takashi",
   "scripts": {
     "start": "node ./bin/www",
-    "lint" : "eslint controller/**/*.js lib/**/*.js routes/**/*.js"
+    "lint": "eslint controller/**/*.js lib/**/*.js routes/**/*.js"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

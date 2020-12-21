@@ -24,13 +24,17 @@ http://localhost:8000/users/2/products/2/brands/
 http://localhost:8000/users/2/products/2/brands/
 ```
 
-**Returns** _All Brands_ objects from [Users]<2> [Products]<2>
+**Returns** <u>Array</u> of <u>All</u> _Brands_ 
+
+from [Users]<2> [Products]<2>
 
 ```
 http://localhost:8000/users/2/products/2/
 ```
 
-**Returns** _Product_ brand objects from [Users]<2> [Products]<2>
+**Returns** <u>object</u> <u>Single Record</u> _Product_ with ```id = 2``` 
+
+from [Users]<2> [Products]<2>
 
 ```
 http://localhost:8000/users/
