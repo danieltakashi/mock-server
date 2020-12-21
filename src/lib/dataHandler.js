@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const payloadConfig = require('../package.json').payloads;
+const payloadConfig = require('../../package.json').payloads;
 
 const PAYLOAD_DIRECTORY = (payloadConfig && payloadConfig.directory) ? payloadConfig.directory : './payloads';
 const CACHE_DIRECTORY = (payloadConfig && payloadConfig.cache) ? payloadConfig.cache : './payloads/cache';
