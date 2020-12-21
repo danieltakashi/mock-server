@@ -2,6 +2,7 @@
   "name": "MockServer",
   "version": "0.0.1",
   "private": true,
+  "author": "Daniel Takashi",
   "scripts": {
     "start": "node ./bin/www"
   },
