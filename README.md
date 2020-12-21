@@ -44,18 +44,24 @@ http://localhost:8000/users/
 ```
 .
 ├── README.md
-├── app.js
 ├── bin
 │   └── www
 ├── package.json
 ├── payloads
 │   ├── brands.json
 │   ├── cache
+│   │   └── brands.json
 │   ├── products.json
 │   └── users.json
-└── routes
-    ├── main.js
-    └── users.js
+└── src
+    ├── app.js
+    ├── controller
+    │   ├── get.controller.js
+    │   └── post.controller.js
+    ├── lib
+    │   └── dataHandler.js
+    └── routes
+        └── index.js
 ```
 
 
