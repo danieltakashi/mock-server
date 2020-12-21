@@ -83,5 +83,6 @@ JSON files named <b>```[model-name]```</b>.json should be placed in the ```paylo
 
 Any alterations on the provided data will be placed in the ```cache``` folder.
 
-On the ```POST / PUT / DELETE``` requests, ```model-name-diff].json``` will be updated.
-On the next ```GET``` request, the ```[model-name].json``` will be loaded and updated with ```model-name-diff].json``` and then the payload will be provided.
+On the ```POST / PUT / DELETE``` requests, ```[model-name].json``` located in ```cache``` folder will be updated/created.
+
+On the next ```GET``` request, the ```./payloads/[model-name].json``` will be loaded and updated with ```./payloads/cache/model-name].json``` and then the payload will be provided.
