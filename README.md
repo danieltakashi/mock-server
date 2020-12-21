@@ -40,7 +40,7 @@ from [Users]<2> [Products]<2>
 http://localhost:8000/users/
 ```
 
-**Returns** _All_ Users
+**Returns** <u>Array</u> of <u>All</u> Users
 
 
 
@@ -76,7 +76,7 @@ http://localhost:8000/users/
 ├── payloads
 │   ├── [model-name].json
 │   ├── cache
-│   │   └── [model-name-diff].json
+│   │   └── [model-name].json
 ```
 
 JSON files named <b>```[model-name]```</b>.json should be placed in the ```payloads``` folder.
