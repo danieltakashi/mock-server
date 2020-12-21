@@ -12,6 +12,32 @@ $ npm start
 ```
 The server will start on PORT: ```8000```
 
+### Path Structure ###
+```
+http://localhost:8000/users/2/products/2/brands/
+                      │     └── <id>
+                      └── [model-name].json
+```
+
+### Return Types ###
+```
+http://localhost:8000/users/2/products/2/brands/
+```
+
+**Returns** _All Brands_ objects from [Users]<2> [Products]<2>
+
+```
+http://localhost:8000/users/2/products/2/
+```
+
+**Returns** _Product_ brand objects from [Users]<2> [Products]<2>
+
+```
+http://localhost:8000/users/
+```
+
+**Returns** _All_ Users
+
 
 
 ### File Structure ###
@@ -31,7 +57,6 @@ The server will start on PORT: ```8000```
     ├── main.js
     └── users.js
 ```
-
 
 
 ### Dummy Models & File Alterations ###
