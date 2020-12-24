@@ -7,15 +7,11 @@ const router = express.Router();
 
 export const routes = () => {
   router.use('*', (req, res) => {
-    let data = {};
-    let message = '';
-    let code = HttpStatus.NOT_IMPLEMENTED;
+    let response = null;
 
     switch (req.method) {
       case 'GET':
-        data = get(req);
-        code = HttpStatus.OK;
-        message = 'User fetched successfully';
+        response = get(req);
         break;
 
       case 'POST':
@@ -38,6 +34,7 @@ export const routes = () => {
         message = 'Method [' + req.method + ']: Not Supported';
     }
 
+    let {code, data, message} = response;
     res.status(code).json({ code, data, message });
   });
 

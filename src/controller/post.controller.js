@@ -18,6 +18,7 @@ const postResource = (resource, body) => {
 
   jsonWrite(resource.model, items);
 };
+
 const postResourceId = (resource, body) => {
   const items = resourceAll(resource.model);
   const item = resourceItem(resource.model, resource.id);

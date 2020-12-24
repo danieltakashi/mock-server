@@ -114,33 +114,34 @@ export const resolveForeignKeys = (item) => {
 
 export const queryFind = (query) => {
   let data = null
-  let item = query.shift();
+  let keepSearching = true;
 
-  // end of query stack
-  if(query.length === 0) {
+  if (query.length === 1) {
+    const item = query[0]
     return !item.id ?  resourceAll(item.model) : resourceItem(item.model, item.id)
   }
 
-  data = resourceItem(item.model, item.id)
-  const nextModel = query[0].model
-  const nextItem = queryFind(query)
-  
-  if(!nextItem) return undefined;
+  for(let idx = 0; idx < query.length -1 && keepSearching; idx ++) {
+    const item = query[idx];
+    const nextResource = query[idx+1];
+    
+    data = !item.id ?  resourceAll(item.model) : resourceItem(item.model, item.id)
 
-  if (!isArray(nextItem)) {
-    let props = resourceProperties(data);
-    
-    let linked = props.some(prop => {
-      let matchProp = prop === nextModel
-      let matchId   =  data[nextModel] && data[nextModel].some(id => id == nextItem.id)
-      return matchId && matchProp
-    })
-    
-    return !linked || !nextItem ? undefined : nextItem;
+    if(!nextResource.id && data[nextResource.model]) {
+      data = data[nextResource.model].map(id => resourceItem(nextResource.model, id))
+    } else {
+      data = data[nextResource.model];
+      if(!data) {
+        keepSearching = false;
+      }else{
+        data = data.filter(id => id == nextResource.id);
+        data = data.map(id => resourceItem(nextResource.model, id));
+        keepSearching = data.length !== 0;
+      }
+    }
   }
   
-  let filtered = nextItem.filter(item => data[nextModel] && data[nextModel].some(id => id === item.id))
-
-  return !filtered ? undefined : filtered;
+  
+  return keepSearching ? data : undefined;
 }
 
