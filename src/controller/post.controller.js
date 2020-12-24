@@ -1,14 +1,14 @@
 'use strict';
+import { queryPath } from '../lib/lambdas.js';
+import { jsonWrite } from '../lib/storage.handler.js';
 import {
-  findItem,
-  findAll,
-  queryPath,
-  modelProperties,
-  writefile
-} from '../lib/dataHandler.js';
+  resourcesItem,
+  resourcesAll,
+  resourceProperties
+} from '../lib/resources.handler.js';
 
 const postResource = (resource, body) => {
-  const items = findAll(resource.model);
+  const items = resourcesAll(resource.model);
   const idx = items
     .map((item) => item.id)
     .sort()
@@ -16,13 +16,13 @@ const postResource = (resource, body) => {
   body.id = idx + 1;
   items.push(body);
 
-  writefile(resource.model, items);
+  jsonWrite(resource.model, items);
 };
 const postResourceId = (resource, body) => {
-  const items = findAll(resource.model);
-  const item = findItem(resource.model, resource.id);
+  const items = resourcesAll(resource.model);
+  const item = resourcesItem(resource.model, resource.id);
 
-  const props = modelProperties(body);
+  const props = resourceProperties(body);
   props.forEach((prop) => {
     item[prop] = body[prop];
   });
@@ -31,7 +31,7 @@ const postResourceId = (resource, body) => {
   for (; idx < items.module && item.id === items[idx]; idx++);
   items[idx] = item;
 
-  writefile(resource.model, items);
+  jsonWrite(resource.model, items);
 };
 
 export const methodPost = (resource, body) => {
