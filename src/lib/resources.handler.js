@@ -66,7 +66,9 @@ export const resourceItem = (model, id) => {
   let record = undefined;
 
   if (model && id) {
-    record = resourceAll(model).filter(resource => resource.id == parseInt(id))[0]
+    record = resourceAll(model).filter(
+      (resource) => resource.id == parseInt(id)
+    )[0];
   }
 
   return record;
@@ -109,39 +111,46 @@ const _resolveForeignKeys = (record) => {
 export const resolveForeignKeys = (item) => {
   if (!item) return undefined;
 
-  return isArray(item) ? item.map(record => _resolveForeignKeys(record)) : _resolveForeignKeys(item)
-}
+  return isArray(item)
+    ? item.map((record) => _resolveForeignKeys(record))
+    : _resolveForeignKeys(item);
+};
 
 export const queryFind = (query) => {
-  let data = null
+  let data = null;
   let keepSearching = true;
 
   if (query.length === 1) {
-    const item = query[0]
-    return !item.id ?  resourceAll(item.model) : resourceItem(item.model, item.id)
+    const item = query[0];
+    return !item.id
+      ? resourceAll(item.model)
+      : resourceItem(item.model, item.id);
   }
 
-  for(let idx = 0; idx < query.length -1 && keepSearching; idx ++) {
+  for (let idx = 0; idx < query.length - 1 && keepSearching; idx++) {
     const item = query[idx];
-    const nextResource = query[idx+1];
-    
-    data = !item.id ?  resourceAll(item.model) : resourceItem(item.model, item.id)
+    const nextResource = query[idx + 1];
 
-    if(!nextResource.id && data[nextResource.model]) {
-      data = data[nextResource.model].map(id => resourceItem(nextResource.model, id))
+    data = !item.id
+      ? resourceAll(item.model)
+      : resourceItem(item.model, item.id);
+
+    if (!nextResource.id && data[nextResource.model]) {
+      data = data[nextResource.model].map((id) =>
+        resourceItem(nextResource.model, id)
+      );
     } else {
       data = data[nextResource.model];
-      if(!data) {
+
+      if (!data) {
         keepSearching = false;
-      }else{
-        data = data.filter(id => id == nextResource.id);
-        data = data.map(id => resourceItem(nextResource.model, id));
+      } else {
+        data = data.filter((id) => id == nextResource.id);
+        data = data.map((id) => resourceItem(nextResource.model, id));
         keepSearching = data.length !== 0;
       }
     }
   }
-  
-  
-  return keepSearching ? data : undefined;
-}
 
+  return keepSearching ? data : undefined;
+};

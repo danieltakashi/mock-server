@@ -1,6 +1,6 @@
 import express from 'express';
 import HttpStatus from 'http-status-codes';
-import get  from '../controller/get.controller.js';
+import get from '../controller/get.controller.js';
 import save from '../controller/post.controller.js';
 
 const router = express.Router();
@@ -34,7 +34,7 @@ export const routes = () => {
         message = 'Method [' + req.method + ']: Not Supported';
     }
 
-    let {code, data, message} = response;
+    let { code, data, message } = response;
     res.status(code).json({ code, data, message });
   });
 

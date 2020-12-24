@@ -8,8 +8,8 @@
     "build": "rimraf build && babel src --out-dir build",
     "prestart": "rimraf build && babel src --out-dir build",
     "start": "node build/index.js",
-    "test": "cross-env NODE_ENV=test mocha --exit --recursive --require @babel/register --timeout=5000 src/**/*spec.js",
-    "test:coverage": "cross-env NODE_ENV=test nyc --require @babel/register --reporter lcov --reporter text mocha --exit --recursive --timeout=5000 tests/**/*.js",
+    "test": "cross-env NODE_ENV=test mocha --exit --recursive --require @babel/register --timeout=5000 src/**/*.spec.js",
+    "test:coverage": "cross-env NODE_ENV=test nyc --require @babel/register --reporter lcov --reporter text mocha --exit --recursive --timeout=5000 src/**/*.spec.js",
     "lint": "eslint ./src/ --ext .js",
     "lint-fix": "eslint ./src/ --ext .js --fix"
   },
