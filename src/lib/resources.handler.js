@@ -6,7 +6,9 @@ import { PAYLOAD_DIRECTORY, CACHE_DIRECTORY, MODELS } from './constants.js';
 import { jsonRead } from './storage.handler.js';
 import { isArray, wrapItem } from './helpers.js';
 
-export const resourceProperties = (item) => Object.keys(item);
+export const resourceProperties = (item) => Object.keys(item)
+                                              .map(key => parseFloat(key) ? null : key)
+                                              .filter(item => item);
 const isDeleted = (item) =>
   resourceProperties(item) &&
   resourceProperties(item)[0] === 'id' &&
@@ -20,7 +22,7 @@ const removeDeletedItems = (records) => {
   return newResult;
 };
 
-export const resourceFileName = (model) => model + '.json';
+export const resourceFileName = (model) => !model ? undefined : model + '.json';
 export const resourceData = (model) => {
   const baseModel = path.join(PAYLOAD_DIRECTORY, resourceFileName(model));
   const diffModel = path.join(CACHE_DIRECTORY, resourceFileName(model));
