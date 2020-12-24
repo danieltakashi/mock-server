@@ -1,36 +1,47 @@
 import express from 'express';
-const router = express.Router();
-import get from '../controller/get.controller.js';
+import HttpStatus from 'http-status-codes';
+import get  from '../controller/get.controller.js';
 import save from '../controller/post.controller.js';
+
+const router = express.Router();
 
 export const routes = () => {
   router.use('*', (req, res) => {
-    var data, msg;
+    let data = {};
+    let message = '';
+    let code = HttpStatus.NOT_IMPLEMENTED;
+
     switch (req.method) {
       case 'GET':
-        data = get(req, res);
-        res.json(data);
+        data = get(req);
+        code = HttpStatus.OK;
+        message = 'User fetched successfully';
         break;
+
       case 'POST':
-      case 'PUT':
-        msg = save(req.method, req);
-        res.json(msg);
+        code = HttpStatus.ACCEPTED;
+        message = save(req.method, req);
         break;
-      // case 'DELETE':
-      //   console.log(req.method)
-      //   break;
+
+      case 'PUT':
+        code = HttpStatus.ACCEPTED;
+        message = save(req.method, req);
+        break;
+
+      case 'DELETE':
+        code = HttpStatus.NOT_IMPLEMENTED;
+        message = 'Method [' + req.method + ']: Not Implemented';
+        break;
+
       default:
-        res
-          .status(500)
-          .json({ message: 'Method [' + req.method + ']: not Supported' });
+        code = HttpStatus.BAD_REQUEST;
+        message = 'Method [' + req.method + ']: Not Supported';
     }
-    res.status(HttpStatus.OK).json({
-      code: HttpStatus.OK,
-      data: data,
-      message: 'User fetched successfully'
-    });
+
+    res.status(code).json({ code, data, message });
   });
 
   return router;
 };
+
 export default routes;

@@ -1,14 +1,14 @@
 'use strict';
-import { queryPath } from '../lib/lambdas.js';
+import { queryPath } from '../lib/helpers.js';
 import { jsonWrite } from '../lib/storage.handler.js';
 import {
-  resourcesItem,
-  resourcesAll,
+  resourceItem,
+  resourceAll,
   resourceProperties
 } from '../lib/resources.handler.js';
 
 const postResource = (resource, body) => {
-  const items = resourcesAll(resource.model);
+  const items = resourceAll(resource.model);
   const idx = items
     .map((item) => item.id)
     .sort()
@@ -19,8 +19,8 @@ const postResource = (resource, body) => {
   jsonWrite(resource.model, items);
 };
 const postResourceId = (resource, body) => {
-  const items = resourcesAll(resource.model);
-  const item = resourcesItem(resource.model, resource.id);
+  const items = resourceAll(resource.model);
+  const item = resourceItem(resource.model, resource.id);
 
   const props = resourceProperties(body);
   props.forEach((prop) => {

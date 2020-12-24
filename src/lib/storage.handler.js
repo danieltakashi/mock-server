@@ -1,8 +1,10 @@
 'use strict';
+
 import fs from 'fs';
 import path from 'path';
 import { FILE, DIRECTORY, CACHE_DIRECTORY } from './constants.js';
 import { resourceFileName } from './resources.handler.js';
+
 export const jsonWrite = (model, diff) =>
   fs.writeFileSync(
     path.join(CACHE_DIRECTORY, resourceFileName(model)),

@@ -1,9 +1,11 @@
 'use strict';
+
 import fs from 'fs';
 import path from 'path';
 import { PAYLOAD_DIRECTORY, CACHE_DIRECTORY, MODELS } from './constants.js';
 import { jsonRead } from './storage.handler.js';
-import { isArray, wrapItem } from './lambdas.js';
+import { isArray, wrapItem } from './helpers.js';
+
 export const resourceProperties = (item) => Object.keys(item);
 const isDeleted = (item) =>
   resourceProperties(item) &&
@@ -19,7 +21,7 @@ const removeDeletedItems = (records) => {
 };
 
 export const resourceFileName = (model) => model + '.json';
-export const resourcesData = (model) => {
+export const resourceData = (model) => {
   const baseModel = path.join(PAYLOAD_DIRECTORY, resourceFileName(model));
   const diffModel = path.join(CACHE_DIRECTORY, resourceFileName(model));
   const baseObject = fs.existsSync(baseModel) ? jsonRead(baseModel) : undefined;
@@ -50,18 +52,27 @@ export const resourcesData = (model) => {
   return baseObject;
 };
 
-export const resourcesItem = (model, id) => {
-  if (model && id) {
-    const record = resourcesData(model).find((item) => item.id === id);
-    if (isDeleted(record)) return undefined;
+export const resourceAll = (model) => {
+  try {
+    const data = resourceData(model);
 
-    return record;
-  } else {
+    return removeDeletedItems(data);
+  } catch (err) {
     return undefined;
   }
 };
 
-export const resolveForeignKeys = (record) => {
+export const resourceItem = (model, id) => {
+  let record = undefined;
+
+  if (model && id) {
+    record = resourceAll(model).filter(resource => resource.id == parseInt(id))[0]
+  }
+
+  return record;
+};
+
+const _resolveForeignKeys = (record) => {
   const models = Object.keys(record).filter((prop) =>
     MODELS.some((model) => model === prop)
   );
@@ -75,12 +86,12 @@ export const resolveForeignKeys = (record) => {
   Object.keys(foreignKeys).forEach((key) => {
     record[key] = foreignKeys[key]
       .map((item) => {
-        const record = resourcesItem(item.model, item.id);
+        const record = resourceItem(item.model, item.id);
 
         // remove deleted items
         if (!record || isDeleted(record)) return null;
 
-        return resolveForeignKeys(record);
+        return _resolveForeignKeys(record);
       })
       .filter((item) => item);
   });
@@ -95,12 +106,41 @@ export const resolveForeignKeys = (record) => {
   return record;
 };
 
-export const resourcesAll = (model) => {
-  try {
-    const data = resourcesData(model);
+export const resolveForeignKeys = (item) => {
+  if (!item) return undefined;
 
-    return removeDeletedItems(data);
-  } catch (err) {
-    return undefined;
+  return isArray(item) ? item.map(record => _resolveForeignKeys(record)) : _resolveForeignKeys(item)
+}
+
+export const queryFind = (query) => {
+  let data = null
+  let item = query.shift();
+
+  // end of query stack
+  if(query.length === 0) {
+    return !item.id ?  resourceAll(item.model) : resourceItem(item.model, item.id)
   }
-};
+
+  data = resourceItem(item.model, item.id)
+  const nextModel = query[0].model
+  const nextItem = queryFind(query)
+  
+  if(!nextItem) return undefined;
+
+  if (!isArray(nextItem)) {
+    let props = resourceProperties(data);
+    
+    let linked = props.some(prop => {
+      let matchProp = prop === nextModel
+      let matchId   =  data[nextModel] && data[nextModel].some(id => id == nextItem.id)
+      return matchId && matchProp
+    })
+    
+    return !linked || !nextItem ? undefined : nextItem;
+  }
+  
+  let filtered = nextItem.filter(item => data[nextModel] && data[nextModel].some(id => id === item.id))
+
+  return !filtered ? undefined : filtered;
+}
+

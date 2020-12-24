@@ -1,18 +1,12 @@
-import HttpStatus from 'http-status-codes';
-import { wrapperIndex } from '../lib/dataHandler.js';
+import { queryPath } from '../lib/helpers.js';
+import { queryFind, resolveForeignKeys } from "../lib/resources.handler.js";
 
 export const get = (req, res) => {
-  try {
-    const data = wrapperIndex(req.originalUrl);
-
-    res.status(HttpStatus.OK).json(data);
-  } catch (error) {
-    res.status(HttpStatus.BAD_REQUEST).json({
-      code: HttpStatus.BAD_REQUEST,
-      data: {},
-      message: error
-    });
-  }
+  const queries = queryPath(req.originalUrl)
+  const resource = queryFind(queries)
+  const data = resolveForeignKeys(resource);
+  
+  return !data ? '' : data;
 };
 
 export default get;
